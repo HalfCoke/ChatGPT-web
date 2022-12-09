@@ -21,7 +21,7 @@ jobs:
 #          echo "${{ env.RELEASE_VERSION_SUB }}"
 #          echo "${{ env.RELEASE_VERSION_MAIN }}"
       - name: Publish to Registry
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@v4
         with:
           name: halfcoke/chatgpt
           username: ${{ secrets.DOCKER_USERNAME }}
