@@ -54,6 +54,9 @@ const Koa = require('koa');
 const Router = require('@koa/router');
 const bodyParser = require('koa-bodyparser');
 const cors = require("koa2-cors");
+import { ChatGPTAPI } from 'chatgpt'
+import pTimeout from 'p-timeout'
+
 const conversationMap = new Map();
 const chatGPT = new ChatGPTAPI({ sessionToken: config.ChatGPTSessionToken });
 
@@ -71,9 +74,9 @@ router.get('/', async ctx => {
     ctx.body = { status: 200 }
   } else {
     if (ctx.params.MsgType === "text") {
-      contactId = ctx.params.FromUserName
-      content = ctx.params.Content
-      MsgId = ctx.params.MsgId
+      var contactId = ctx.params.FromUserName
+      var content = ctx.params.Content
+      var MsgId = ctx.params.MsgId
       console.log('MsgId: ' + MsgId + ' Talker: ' + contactId)
       ctx.body = replyMessage(MsgId, content, contactId)
     } else {
