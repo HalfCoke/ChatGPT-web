@@ -54,8 +54,8 @@ const Koa = require('koa');
 const Router = require('@koa/router');
 const bodyParser = require('koa-bodyparser');
 const cors = require("koa2-cors");
-const ChatGPTAPI = require("chatgpt")
-const pTimeout = require("p-timeout")
+import { ChatGPTAPI } from 'chatgpt'
+import pTimeout from 'p-timeout'
 
 const conversationMap = new Map();
 const chatGPT = new ChatGPTAPI({ sessionToken: config.ChatGPTSessionToken });
