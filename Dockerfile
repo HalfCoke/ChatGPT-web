@@ -10,9 +10,8 @@ ENV TZ Asia/Shanghai
 
 RUN apk add g++ make python3
 
-COPY . /app_build
-WORKDIR /app_build
+COPY . /app
+WORKDIR /app
 RUN npm install --registry=https://registry.npm.taobao.org
 RUN npm run build
-RUN mkdir /app && cp -r dist/* /app/
-CMD UV_THREADPOOL_SIZE=4 node /app/index.js
+CMD UV_THREADPOOL_SIZE=4 node /app/dist/index.js
