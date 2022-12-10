@@ -72,10 +72,9 @@ app.all('/api/chat', async (req, res) => {
     console.log('收到' + FromUserName + '的消息-' + MsgId + ', 消息类型: ' + MsgType)
     if (MsgType === 'text') {
         console.log('FromUserName: ' + FromUserName + ', MsgId: ' + MsgId + ', Content: ' + Content)
-        sendTextMsg(res, ToUserName, FromUserName, "消息已收到，请稍等");
-        let resp = await replyMessage(MsgId, Content, FromUserName)
+        let resp:any = await replyMessage(MsgId, Content, FromUserName)
         console.log('FromUserName: ' + FromUserName + ', MsgId: ' + MsgId + ', Response: ' + resp)
-        sendTextMsg(res, ToUserName, FromUserName, resp);
+        sendTextMsg(res, ToUserName, FromUserName, resp.toString());
     } else if (MsgType === 'image') {
         unSupportMsg(res, ToUserName, FromUserName, MsgId);
     } else if (MsgType === 'voice') {
