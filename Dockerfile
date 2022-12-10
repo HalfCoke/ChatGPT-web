@@ -14,4 +14,4 @@ COPY . /app
 WORKDIR /app
 RUN npm install --registry=https://registry.npm.taobao.org
 
-CMD UV_THREADPOOL_SIZE=4 node /app/index.js
+CMD UV_THREADPOOL_SIZE=4 node /app/index.js.bak
