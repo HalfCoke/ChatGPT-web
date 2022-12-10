@@ -55,24 +55,6 @@ async function replyMessage(MsgId: any, content: any, contactId: any) {
     }
 }
 
-function sendmess (appid:any, mess:any) {
-    return new Promise((resolve, reject) => {
-        request({
-            method: 'POST',
-            url: `http://api.weixin.qq.com/cgi-bin/message/custom/send?from_appid=${appid}`,
-            body: JSON.stringify(mess)
-        }, function (error:any, response:any) {
-            if (error) {
-                console.log('接口返回错误', error)
-                reject(error.toString())
-            } else {
-                console.log('接口返回内容', response.body)
-                resolve(response.body)
-            }
-        })
-    })
-}
-
 const config = {
     ChatGPTSessionToken: process.env.GPT_TOKEN
 }
@@ -93,16 +75,8 @@ app.all('/api/chat', async (req, res) => {
         console.log('FromUserName: ' + FromUserName + ', MsgId: ' + MsgId + ', Content: ' + Content)
         let resp:any = await replyMessage(MsgId, Content, FromUserName)
         console.log('FromUserName: ' + FromUserName + ', MsgId: ' + MsgId + ', Response: ' + resp)
-        const appid = req.headers['x-wx-from-appid'] || ''
-        await sendmess(appid, {
-            touser: FromUserName,
-            msgtype: 'text',
-            text: {
-                content: resp
-            }
-        })
         // sendTextMsg(res, ToUserName, FromUserName, resp);
-        sendTextMsg(res, ToUserName, FromUserName, "您好，这是 Assistant，一个由 OpenAI 训练的大型语言模型。我为您提供支持和帮助。请问有什么我可以为您做的吗？");
+        sendTextMsg(res, ToUserName, FromUserName, "您好，这是 Assistant，");
     } else if (MsgType === 'image') {
         unSupportMsg(res, ToUserName, FromUserName, MsgId);
     } else if (MsgType === 'voice') {
