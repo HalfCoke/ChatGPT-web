@@ -14,4 +14,4 @@ COPY . /app
 WORKDIR /app
 RUN npm install --registry=https://registry.npm.taobao.org
 RUN npm run build
-CMD UV_THREADPOOL_SIZE=4 npm run dev
+CMD npm run dev
