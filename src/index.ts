@@ -1,4 +1,4 @@
-import express = require('express');
+import express from "express"
 import bodyParser from "body-parser";
 import {ChatGPTAPI} from "chatgpt";
 import pTimeout from "p-timeout";
