@@ -2,6 +2,7 @@ import express from "express"
 import bodyParser from "body-parser";
 import {ChatGPTAPI} from "chatgpt";
 import pTimeout from "p-timeout";
+import request from "request"
 
 function unSupportMsg(res: any, ToUserName: any, FromUserName: any, MsgId: any) {
     sendTextMsg(res, ToUserName, FromUserName, '暂不支持的消息类型')
@@ -32,16 +33,14 @@ async function getChatGPTReply(MsgId: any, content: any, contactId: any) {
     const currentConversation = getConversation(contactId);
     // send a message and wait for the response
     const threeMinutesMs = 3 * 60 * 1000
-    const response = await pTimeout(
+    // response is a markdown-formatted string
+    return pTimeout(
         currentConversation.sendMessage(content),
         {
             milliseconds: threeMinutesMs,
             message: 'ChatGPT timed out waiting for response'
         }
-    )
-
-    // response is a markdown-formatted string
-    return response
+    );
 }
 
 async function replyMessage(MsgId: any, content: any, contactId: any) {
@@ -54,6 +53,24 @@ async function replyMessage(MsgId: any, content: any, contactId: any) {
         }
         conversationMap.delete(contactId);
     }
+}
+
+function sendmess (appid:any, mess:any) {
+    return new Promise((resolve, reject) => {
+        request({
+            method: 'POST',
+            url: `http://api.weixin.qq.com/cgi-bin/message/custom/send?from_appid=${appid}`,
+            body: JSON.stringify(mess)
+        }, function (error:any, response:any) {
+            if (error) {
+                console.log('接口返回错误', error)
+                reject(error.toString())
+            } else {
+                console.log('接口返回内容', response.body)
+                resolve(response.body)
+            }
+        })
+    })
 }
 
 const config = {
@@ -69,12 +86,19 @@ app.use(bodyParser.json()) // 将数据转换为json格式
 
 
 app.all('/api/chat', async (req, res) => {
-    const {ToUserName, FromUserName, MsgType, MsgId, Content, CreateTime} = req.body
+    const {ToUserName, FromUserName, MsgType, MsgId, Content} = req.body
     console.log('收到' + FromUserName + '的消息-' + MsgId + ', 消息类型: ' + MsgType)
     if (MsgType === 'text') {
         console.log('FromUserName: ' + FromUserName + ', MsgId: ' + MsgId + ', Content: ' + Content)
         let resp:any = await replyMessage(MsgId, Content, FromUserName)
         console.log('FromUserName: ' + FromUserName + ', MsgId: ' + MsgId + ', Response: ' + resp)
+        await sendmess("", {
+            touser: FromUserName,
+            msgtype: 'text',
+            text: {
+                content: resp
+            }
+        })
         sendTextMsg(res, ToUserName, FromUserName, resp.toString());
     } else if (MsgType === 'image') {
         unSupportMsg(res, ToUserName, FromUserName, MsgId);
