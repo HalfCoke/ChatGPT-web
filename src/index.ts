@@ -81,6 +81,7 @@ const app: express.Application = express();
 const conversationMap = new Map();
 const chatGPT = new ChatGPTAPI({sessionToken: config.ChatGPTSessionToken === undefined ? '' : config.ChatGPTSessionToken});
 // 用 body-parser 库进行数据格式转换
+app.use(bodyParser.raw())
 app.use(bodyParser.urlencoded({extended: true})) // 是否进行url解码
 app.use(bodyParser.json()) // 将数据转换为json格式
 
@@ -92,14 +93,16 @@ app.all('/api/chat', async (req, res) => {
         console.log('FromUserName: ' + FromUserName + ', MsgId: ' + MsgId + ', Content: ' + Content)
         let resp:any = await replyMessage(MsgId, Content, FromUserName)
         console.log('FromUserName: ' + FromUserName + ', MsgId: ' + MsgId + ', Response: ' + resp)
-        await sendmess("", {
+        const appid = req.headers['x-wx-from-appid'] || ''
+        await sendmess(appid, {
             touser: FromUserName,
             msgtype: 'text',
             text: {
                 content: resp
             }
         })
-        sendTextMsg(res, ToUserName, FromUserName, resp.toString());
+        // sendTextMsg(res, ToUserName, FromUserName, resp);
+        sendTextMsg(res, ToUserName, FromUserName, "您好，这是 Assistant，一个由 OpenAI 训练的大型语言模型。我为您提供支持和帮助。请问有什么我可以为您做的吗？");
     } else if (MsgType === 'image') {
         unSupportMsg(res, ToUserName, FromUserName, MsgId);
     } else if (MsgType === 'voice') {
@@ -115,6 +118,6 @@ app.all('/api/chat', async (req, res) => {
     }
 })
 
-app.listen(8080, () => {
-    console.log('ChatGPT listening on port 8080!');
+app.listen(80, () => {
+    console.log('ChatGPT listening on port 80!');
 });
