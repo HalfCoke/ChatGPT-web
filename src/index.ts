@@ -9,6 +9,7 @@ function unSupportMsg(res: any, ToUserName: any, FromUserName: any, MsgId: any) 
 }
 
 function sendTextMsg(res: any, ToUserName: any, FromUserName: any, Content: any) {
+    console.log('FromUserName: ' + FromUserName + ', Response: ' + Content)
     res.send({
         ToUserName: FromUserName,
         FromUserName: ToUserName,
